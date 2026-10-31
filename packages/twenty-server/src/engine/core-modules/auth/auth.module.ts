@@ -1,3 +1,4 @@
+import { CommunityOidcController } from 'src/engine/core-modules/auth/community-oidc/community-oidc.controller';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -126,6 +127,7 @@ import { AuthService } from './services/auth.service';
     UserSessionModule,
   ],
   controllers: [
+    CommunityOidcController,
     GoogleAuthController,
     MicrosoftAuthController,
     GoogleAPIsAuthController,

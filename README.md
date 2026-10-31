@@ -1,3 +1,5 @@
+> **Elmar Community OIDC pilot:** independent Authentik login based on Twenty `twenty/v2.54.0`. [Configuration, license boundary and tests](docs/elmar/OIDC.md).
+
 <p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />

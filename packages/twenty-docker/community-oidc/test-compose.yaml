@@ -1,0 +1,8 @@
+name: twenty-community-oidc-tests
+services:
+  tests:
+    image: elmar-twenty-sso:development
+    pull_policy: never
+    entrypoint: [node, --test, /tests/flow.test.cjs]
+    volumes: [./flow.test.cjs:/tests/flow.test.cjs:ro]
+    network_mode: none

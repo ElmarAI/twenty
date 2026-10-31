@@ -1,4 +1,5 @@
 export enum AuthProviderEnum {
+  CommunityOidc = 'community-oidc',
   Google = 'google',
   Microsoft = 'microsoft',
   Password = 'password',
