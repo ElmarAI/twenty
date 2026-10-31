@@ -23,6 +23,19 @@ export type LoginTransaction = {
   started: number;
 };
 export const TRANSACTION_COOKIE = '__Secure-twenty-community-oidc';
+export const readTransactionCookie = (header: string | undefined): string => {
+  const values = (header ?? '').split(';').flatMap((part) => {
+    const separator = part.indexOf('=');
+    return separator >= 0 &&
+      part.slice(0, separator).trim() === TRANSACTION_COOKIE
+      ? [part.slice(separator + 1).trim()]
+      : [];
+  });
+  if (values.length !== 1 || !/^[A-Za-z0-9_-]{43}$/.test(values[0]))
+    throw new Error('Invalid transaction cookie');
+  return values[0];
+};
+
 export const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: true,

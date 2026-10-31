@@ -85,7 +85,7 @@ a focused strict typecheck of the OIDC protocol helper. No new runtime packages 
 installed. The compiler refuses to process an Enterprise-marked file. A full Nx
 monorepo build/typecheck is not part of this small pilot build.
 
-The 36 focused tests use Node's built-in runner and the actual bundled openid-client,
+The 40 focused tests use Node's built-in runner and the actual bundled openid-client,
 a local mock token/JWKS server and real RSA signatures. The test container has no
 external network. Cases cover valid exchange, bad signatures/claims, missing ID
 tokens, state/nonce/PKCE, replay/expiry, explicit links, disabled/deleted users,
@@ -98,3 +98,8 @@ customer material never belong in this fork. Corresponding source and build file
 are available at https://github.com/ElmarAI/twenty/tree/elmar/authentik-oidc.
 Pin the source revision and image, and repeat these tests plus the browser pilot
 when taking upstream updates. Registry/CI publication is not configured yet.
+
+The adapter scopes discovery, token and JWKS HTTP options to its own issuer/client,
+without changing global hooks. The issuer is administrator-configured and may be
+on a private network. The callback reads its cookie directly from the raw header;
+Twenty does not install cookie-parser middleware. Duplicate cookies fail closed.

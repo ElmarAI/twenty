@@ -14,6 +14,7 @@ import {
   CommunityOidcFlow,
   TRANSACTION_COOKIE,
   COOKIE_OPTIONS,
+  readTransactionCookie,
   validateLinkedAccount,
 } from './community-oidc-flow';
 
@@ -58,7 +59,7 @@ export class CommunityOidcController {
     try {
       const client = await this.flow.getClient();
       const link = await this.flow.authenticate(
-        request.cookies?.[TRANSACTION_COOKIE] ?? '',
+        readTransactionCookie(request.headers.cookie),
         client.callbackParams(request),
       );
       const [user, membership, workspace] = await Promise.all([

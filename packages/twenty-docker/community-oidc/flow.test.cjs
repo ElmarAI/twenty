@@ -15,6 +15,8 @@ const jwt = require('/app/node_modules/jsonwebtoken');
 const {
   CommunityOidcFlow,
   CommunityOidcIssuer,
+  readTransactionCookie,
+  TRANSACTION_COOKIE,
   requireHttpsUrl,
   findIdentityLink,
   validateGroupAndSubject,
@@ -342,4 +344,27 @@ test('discovery HTTP settings are isolated from global issuer hooks', () => {
     if (previous) Issuer[custom.http_options] = previous;
     else delete Issuer[custom.http_options];
   }
+});
+
+test('read raw Cookie header without cookie-parser middleware', () => {
+  const value = 'a'.repeat(43);
+  assert.equal(
+    readTransactionCookie(`other=x; ${TRANSACTION_COOKIE}=${value}; final=y`),
+    value,
+  );
+});
+test('reject missing or malformed transaction cookie', () => {
+  for (const header of [
+    undefined,
+    '',
+    'other=x',
+    `${TRANSACTION_COOKIE}=short`,
+    `${TRANSACTION_COOKIE}=${'%'.repeat(43)}`,
+  ]) {
+    assert.throws(() => readTransactionCookie(header));
+  }
+});
+test('reject ambiguous duplicate transaction cookies', () => {
+  const cookie = `${TRANSACTION_COOKIE}=${'a'.repeat(43)}`;
+  assert.throws(() => readTransactionCookie(`${cookie}; ${cookie}`));
 });
