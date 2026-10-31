@@ -108,6 +108,15 @@ export const validateLinkedAccount = (
   }
 };
 
+// This administrator-configured issuer can live on a private network.
+// Keep HTTP settings scoped to this adapter, including discovery and JWKS.
+export class CommunityOidcIssuer extends Issuer {
+  static [custom.http_options] = () => ({
+    timeout: 10000,
+    followRedirect: false,
+  });
+}
+
 export class CommunityOidcFlow {
   private client?: Client;
   private cache?: Redis;
@@ -145,7 +154,8 @@ export class CommunityOidcFlow {
   async getClient(): Promise<Client> {
     const config = this.configuration();
     if (!this.client) {
-      const issuer = await Issuer.discover(config.issuer);
+      const issuer = await CommunityOidcIssuer.discover(config.issuer);
+      issuer[custom.http_options] = CommunityOidcIssuer[custom.http_options];
       const methods = issuer.metadata.code_challenge_methods_supported;
       if (
         issuer.issuer !== config.issuer ||

@@ -6,10 +6,15 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { Issuer, generators } = require('/app/node_modules/openid-client');
+const {
+  Issuer,
+  generators,
+  custom,
+} = require('/app/node_modules/openid-client');
 const jwt = require('/app/node_modules/jsonwebtoken');
 const {
   CommunityOidcFlow,
+  CommunityOidcIssuer,
   requireHttpsUrl,
   findIdentityLink,
   validateGroupAndSubject,
@@ -319,4 +324,22 @@ test('existing active membership accepted without role changes', () => {
     workspace = { activationStatus: 'ACTIVE' };
   validateLinkedAccount(user, membership, workspace);
   assert.equal(membership.role, 'member');
+});
+
+test('discovery HTTP settings are isolated from global issuer hooks', () => {
+  const previous = Issuer[custom.http_options];
+  const globalHook = () => {
+    throw new Error('Unrelated global hook');
+  };
+  Issuer[custom.http_options] = globalHook;
+  try {
+    assert.deepEqual(CommunityOidcIssuer[custom.http_options](), {
+      timeout: 10000,
+      followRedirect: false,
+    });
+    assert.equal(Issuer[custom.http_options], globalHook);
+  } finally {
+    if (previous) Issuer[custom.http_options] = previous;
+    else delete Issuer[custom.http_options];
+  }
 });
